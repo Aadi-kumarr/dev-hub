@@ -34,8 +34,8 @@ function Offline({ app }: { app: HubApp }) {
         </span>
         <h2 className="mt-5 text-xl font-semibold tracking-tight">{app.name} isn't running</h2>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          Nothing answered on <span className="numeric text-fg">port {app.port}</span>. Check the{" "}
-          {app.name} logs in the start-all window, or run start-all again.
+          Nothing answered on <span className="numeric text-fg">port {app.port}</span>. The{" "}
+          <span className="numeric text-fg">logs</span> folder next to start-all.bat shows why.
         </p>
         <button
           type="button"

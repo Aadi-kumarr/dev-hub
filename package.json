@@ -6,8 +6,8 @@
   "description": "Starts Fintra, Nivesh Control Room and the hub together.",
   "scripts": {
     "prestart": "node scripts/check-mongo.mjs",
-    "start": "concurrently --names FINTRA,NIVESH-API,NIVESH-UI,HUB,READY --prefix-colors green.bold,yellow.bold,yellow.bold,cyan.bold,gray --prefix \"[{name}]\" --pad-prefix \"npm:app:fintra\" \"npm:app:nivesh-api\" \"npm:app:nivesh-ui\" \"npm:app:hub\" \"npm:open-when-ready\"",
-    "app:fintra": "cd Fintra && yarn dev",
+    "start": "node scripts/start-all.mjs",
+    "app:fintra": "cd Fintra && npm run dev",
     "app:nivesh-api": "cd Nivesh-control-room\\backend && .venv\\Scripts\\python -m uvicorn app.main:app --port 8000",
     "app:nivesh-ui": "cd Nivesh-control-room\\frontend && npm run dev -- --host 127.0.0.1 --port 5173 --strictPort",
     "app:hub": "cd hub && npm run dev",

@@ -12,7 +12,17 @@ npm start
 ```
 
 It checks MongoDB, starts everything, waits for the apps to answer, then opens
-http://localhost:4000. Press Ctrl+C to stop everything.
+http://localhost:4000. Press Ctrl+C to stop everything, or close the window.
+
+If an app doesn't answer within 2 minutes, the hub opens anyway and the window names what's
+missing. `logs\<service>.log` keeps each service's output and exit code, even after the window
+closes. Each run replaces the previous run's logs.
+
+The launcher needs Node 22 or newer. `start-all.bat` uses fnm's default Node, because a
+double-click doesn't get the fnm setup that terminals have.
+
+If the hub says start-all isn't running, an old tab has outlived the launcher: start it again and
+the tab reconnects.
 
 First time only, install the hub's packages (`start-all.bat` installs the launcher's own):
 
@@ -87,8 +97,14 @@ Use `localhost` in `url`, not `127.0.0.1`. The app must also allow being shown i
 winget install --id MongoDB.DatabaseTools --exact
 ```
 
-If `mongorestore` isn't found afterwards, open a new terminal. If it's still missing, use the full
-path, `& "C:\Program Files\MongoDB\Tools\100\bin\mongorestore.exe"`, in place of `mongorestore`.
+They install to `C:\Program Files\MongoDB\Tools\100\bin`, which is not added to PATH. To add it for
+your user, run this once and open a new terminal:
+
+```powershell
+[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';C:\Program Files\MongoDB\Tools\100\bin', 'User')
+```
+
+Or use `& "C:\Program Files\MongoDB\Tools\100\bin\mongorestore.exe"` in place of `mongorestore`.
 
 Stop the apps first, then run these from this folder.
 
@@ -106,7 +122,11 @@ mongorestore --uri="mongodb://127.0.0.1:27017" --nsInclude="nivesh.*" --drop _sa
 
 `--drop` deletes each collection in the dump and rebuilds it from the backup, so **anything added
 since that backup is lost**. Without `--drop`, documents that still exist are left as they are and
-only missing ones come back. Add `--dryRun` to either command to preview it without changing data.
+only missing ones come back.
+
+To preview without changing data, add `--dryRun -v` to either command. The `-v` matters: without it
+a dry run names no collections. It always ends with `0 document(s) restored`, which is expected.
+The `don't know what to do with file ...prelude.json` lines are harmless.
 
 Fintra's JSON copies in `_safety\fintra-backups-2026-11-07\` can be restored instead with
 **Import Backup** in the app, which never removes anything.

@@ -2,9 +2,10 @@
 node_modules/
 hub/dist/
 
-# Local backups and browser logs
+# Local backups and logs
 _safety/
 .gstack/
+logs/
 
 # The two apps are separate git repos
 Fintra/

@@ -18,6 +18,8 @@ const TIMEOUT_MS = 8_000;
 
 type StatusContextValue = {
   statuses: Record<string, AppStatus>;
+  /** False once the hub's own server stops answering: this tab outlived start-all. */
+  launcherUp: boolean;
   recheck: (app: HubApp) => Promise<void>;
 };
 
@@ -43,6 +45,7 @@ export function AppStatusProvider({ children }: { children: ReactNode }) {
   const [statuses, setStatuses] = useState<Record<string, AppStatus>>(() =>
     Object.fromEntries(apps.map((app) => [app.id, "checking" as AppStatus])),
   );
+  const [launcherUp, setLauncherUp] = useState(true);
   const current = useRef(statuses);
   current.current = statuses;
 
@@ -70,18 +73,26 @@ export function AppStatusProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const checkAll = () => {
-      if (!document.hidden) apps.forEach((app) => void recheck(app));
+      apps.forEach((app) => void recheck(app));
+      fetch("/favicon.svg", { method: "HEAD", cache: "no-store", signal: AbortSignal.timeout(TIMEOUT_MS) }).then(
+        () => setLauncherUp(true),
+        () => setLauncherUp(false),
+      );
     };
+    const checkIfVisible = () => {
+      if (!document.hidden) checkAll();
+    };
+    // Always check once, even in a background tab, so it doesn't sit on "Checking".
     checkAll();
-    const timer = setInterval(checkAll, POLL_MS);
-    document.addEventListener("visibilitychange", checkAll);
+    const timer = setInterval(checkIfVisible, POLL_MS);
+    document.addEventListener("visibilitychange", checkIfVisible);
     return () => {
       clearInterval(timer);
-      document.removeEventListener("visibilitychange", checkAll);
+      document.removeEventListener("visibilitychange", checkIfVisible);
     };
   }, [recheck]);
 
-  const value = useMemo(() => ({ statuses, recheck }), [statuses, recheck]);
+  const value = useMemo(() => ({ statuses, launcherUp, recheck }), [statuses, launcherUp, recheck]);
   return <StatusContext.Provider value={value}>{children}</StatusContext.Provider>;
 }
 

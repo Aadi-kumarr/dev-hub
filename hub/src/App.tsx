@@ -5,6 +5,7 @@ import { apps, hub, type HubApp } from "./apps.config";
 import { AppFrame } from "./components/AppFrame";
 import { CommandPalette } from "./components/CommandPalette";
 import { Home } from "./components/Home";
+import { LauncherDown } from "./components/LauncherDown";
 import { Rail } from "./components/Rail";
 import { useShortcuts } from "./lib/useShortcuts";
 
@@ -75,6 +76,8 @@ export default function App() {
           )}
         </AnimatePresence>
       </main>
+
+      <LauncherDown />
 
       <CommandPalette
         open={paletteOpen}

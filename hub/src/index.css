@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #07090b;
+  --color-panel: #0d1014;
+  --color-raised: #141820;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-fg: #e8ebef;
+  --color-muted: #8b939e;
+  --color-live: #34d399;
+  --color-down: #f87171;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, Consolas, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* In the base layer so utilities such as outline-none can override it. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent, var(--color-fg));
+    outline-offset: 2px;
+  }
+}
+
+.numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Home backdrop: a faded grid, film grain and one soft glow per app. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(52rem 34rem at 10% -8%, rgb(52 211 153 / 0.17), transparent 70%),
+    radial-gradient(52rem 34rem at 94% 0%, rgb(245 181 68 / 0.13), transparent 70%);
+}
+
+.backdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 20%, black, transparent);
+}
+
+.backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* App card: the glow takes its colour from --accent, set per app. */
+.app-card {
+  border: 1px solid var(--color-line);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 40%), var(--color-panel);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.app-card:hover,
+.app-card:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow:
+    0 24px 70px -28px color-mix(in srgb, var(--accent) 55%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.app-card .card-glow {
+  opacity: 0.55;
+  background: radial-gradient(30rem 18rem at 15% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%);
+  transition: opacity 200ms ease;
+}
+
+.app-card:hover .card-glow,
+.app-card:focus-visible .card-glow {
+  opacity: 1;
+}
+
+.icon-tile {
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.key-cap {
+  display: inline-flex;
+  min-width: 1.375rem;
+  justify-content: center;
+  padding: 0.0625rem 0.3125rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-fg);
+  background: rgb(255 255 255 / 0.04);
+}
+
+.pulse {
+  animation: pulse 2.4s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 55%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+
+  .app-card,
+  .app-card .card-glow {
+    transition: none;
+  }
+}

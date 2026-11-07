@@ -1,0 +1,20 @@
+# Generated
+node_modules/
+hub/dist/
+
+# Local backups and browser logs
+_safety/
+.gstack/
+
+# The two apps are separate git repos
+Fintra/
+Nivesh-control-room/
+
+# Other projects in this folder, also separate git repos
+ai-job-search/
+fno-order-block/
+gstack/
+kite-skills/
+MiroFish/
+rea/
+trader-skill/
